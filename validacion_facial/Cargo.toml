@@ -1,0 +1,21 @@
+[package]
+name = "validacion_facial"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "staticlib"] # Crucial para Android e iOS
+name = "validacion_facial"
+
+[dependencies]
+# Cambiamos 'workspace' por 'version'
+dlib-face-recognition = { version = "0.3.2", features = ["embed-all"] }
+image = "0.24"
+rusqlite = { version = "0.31.0", features = ["bundled"] }
+uuid = { version = "1.0", features = ["v4", "fast-rng"] }
+flutter_rust_bridge = "=2.0.0"
+anyhow = "1.0"
+
+[features]
+default = ["build-native"]
+build-native = ["dlib-face-recognition/build-native"]

@@ -1,0 +1,4 @@
+# flutter_rust_bridge.yaml
+rust_root: "validacion_facial"
+rust_input: "crate::api"
+dart_output: "lib/src/rust/"
