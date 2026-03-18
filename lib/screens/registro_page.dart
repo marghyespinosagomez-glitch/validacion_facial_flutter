@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'camara_page.dart';
 import 'dart:typed_data';
-
+import '../rust_bridge.dart';
 class RegisterPage extends StatefulWidget {
   final List<CameraDescription> cameras;
 
@@ -41,7 +41,14 @@ class _RegisterPageState extends State<RegisterPage> {
 
       // --- SIMULACIÓN DE PROCESAMIENTO ---
       // Aquí es donde llamarías a tu lógica de pgvector o API
-      await Future.delayed(const Duration(seconds: 2)); 
+      final resultado = await Future(() => 
+    RustBridge.registrarUsuario(_nameController.text, fotoBytes));
+
+if (resultado == 1) {
+    _statusMessage = "✅ Usuario registrado correctamente";
+} else {
+    _statusMessage = "❌ Error al registrar usuario";
+	} 
       // ------------------------------------
 
       if (!context.mounted) return;

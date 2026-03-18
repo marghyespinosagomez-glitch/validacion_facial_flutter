@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'dart:typed_data';
 import 'camara_page.dart';
-
+import '../rust_bridge.dart';
 class IngresoPage extends StatefulWidget {
   final List<CameraDescription> cameras;
 
@@ -36,7 +36,14 @@ class _IngresoPageState extends State<IngresoPage> {
 
       // --- SIMULACIÓN DE PROCESAMIENTO ---
       // Aquí es donde llamarías a tu lógica de pgvector o API
-      await Future.delayed(const Duration(seconds: 2)); 
+      final nombre = await Future(() => 
+    RustBridge.verificarUsuario(fotoBytes));
+
+if (nombre != null) {
+    _statusMessage = "✅ Bienvenido $nombre";
+} else {
+    _statusMessage = "❌ Rostro no reconocido";
+} 
       // ------------------------------------
 
       if (!context.mounted) return;
