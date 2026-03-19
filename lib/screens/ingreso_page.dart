@@ -36,8 +36,7 @@ class _IngresoPageState extends State<IngresoPage> {
 
       // --- SIMULACIÓN DE PROCESAMIENTO ---
       // Aquí es donde llamarías a tu lógica de pgvector o API
-      final nombre = await Future(() => 
-    RustBridge.verificarUsuario(fotoBytes));
+      final nombre = await RustBridge.verificarUsuario(fotoBytes);
 
 if (nombre != null) {
     _statusMessage = "✅ Bienvenido $nombre";
