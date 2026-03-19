@@ -41,8 +41,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
       // --- SIMULACIÓN DE PROCESAMIENTO ---
       // Aquí es donde llamarías a tu lógica de pgvector o API
-      final resultado = await Future(() => 
-    RustBridge.registrarUsuario(_nameController.text, fotoBytes));
+      final resultado = await RustBridge.registrarUsuario(_nameController.text, fotoBytes);
 
 if (resultado == 1) {
     _statusMessage = "✅ Usuario registrado correctamente";
