@@ -30,10 +30,10 @@ migrate_working_dir/
 .pub-cache/
 .pub/
 /build/
-
+assets/arcface.onnx
 # Symbolication related
 app.*.symbols
-
+android/app/src/main/jniLibs/
 # Obfuscation related
 app.*.map.json
 
