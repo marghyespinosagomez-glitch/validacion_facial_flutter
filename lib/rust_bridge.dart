@@ -4,8 +4,14 @@ import 'package:ffi/ffi.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 
-typedef InitModelNative = Int32 Function(Pointer<Utf8> modelPath);
-typedef InitModelDart = int Function(Pointer<Utf8> modelPath);
+typedef InitModelNative = Int32 Function(
+  Pointer<Utf8> predictorPath,
+  Pointer<Utf8> recognizerPath,
+);
+typedef InitModelDart = int Function(
+  Pointer<Utf8> predictorPath,
+  Pointer<Utf8> recognizerPath,
+);
 typedef InitIndexNative = Int32 Function(Pointer<Utf8> dbPath);
 typedef InitIndexDart = int Function(Pointer<Utf8> dbPath);
 
@@ -41,7 +47,7 @@ typedef VerificarUsuarioDart = int Function(
 
 class RustBridge {
   static final DynamicLibrary _lib = DynamicLibrary.open(
-    'libreconocimiento_facial.so',
+    'libreconocimiento_facial_dlib.so',
   );
   static final InitIndexDart _initIndex =
       _lib.lookup<NativeFunction<InitIndexNative>>('init_index').asFunction();
@@ -54,8 +60,14 @@ class RustBridge {
     return result;
   }
 
-  static Future<String> _getModelPath() async {
-    return '/data/user/0/com.example.app_facial/files/arcface.onnx';
+  static Future<String> _getPredictorPath() async {
+    final dir = await getApplicationDocumentsDirectory();
+    return path.join(dir.path, 'shape_predictor.dat');
+  }
+
+  static Future<String> _getRecognizerPath() async {
+    final dir = await getApplicationDocumentsDirectory();
+    return path.join(dir.path, 'dlib_recognition.dat');
   }
 
   static Future<String> _getDbPath() async {
@@ -75,11 +87,13 @@ class RustBridge {
       _lib.lookup<NativeFunction<InitModelNative>>('init_model').asFunction();
 
   static Future<int> initModel() async {
-    final modelPath = await _getModelPath();
-    print('Cargando modelo desde: $modelPath');
-    final modelPathPtr = modelPath.toNativeUtf8();
-    final result = _initModel(modelPathPtr);
-    calloc.free(modelPathPtr);
+    final predictorPath = await _getPredictorPath();
+    final recognizerPath = await _getRecognizerPath();
+    final predictorPtr = predictorPath.toNativeUtf8();
+    final recognizerPtr = recognizerPath.toNativeUtf8();
+    final result = _initModel(predictorPtr, recognizerPtr);
+    calloc.free(predictorPtr);
+    calloc.free(recognizerPtr);
     return result;
   }
 

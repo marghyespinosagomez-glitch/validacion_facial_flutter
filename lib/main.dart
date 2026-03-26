@@ -12,27 +12,47 @@ late List<CameraDescription> _cameras;
 Future<void> main() async {
     WidgetsFlutterBinding.ensureInitialized();
     _cameras = await availableCameras();
-    await _copiarModelo(); // <- primero copiar
+    await _copiarModelos();
+    // await _copiarBD();
     RustBridge.initModel().then((result) {
         print('Modelo inicializado: $result');
     });
     runApp(const MyApp());
 }
 
-Future<void> _copiarModelo() async {
-    final dir = await getApplicationDocumentsDirectory();
-    final modelPath = '${dir.path}/arcface.onnx';
+// Future<void> _copiarBD() async {
+//     final dir = await getApplicationDocumentsDirectory();
+//     final dbPath = '${dir.path}/faces.db';
+//     final sdPath = '/sdcard/faces.db';
     
-    // solo copiar si no existe
-    if (!File(modelPath).existsSync()) {
-        final data = await rootBundle.load('assets/arcface.onnx');
+//     if (File(sdPath).existsSync() && !File(dbPath).existsSync()) {
+//         await File(sdPath).copy(dbPath);
+//         print('✅ BD copiada desde SD');
+//     }
+// }
+
+Future<void> _copiarModelos() async {
+    final dir = await getApplicationDocumentsDirectory();
+    
+    // copiar shape predictor
+    final predictorPath = '${dir.path}/shape_predictor.dat';
+    if (!File(predictorPath).existsSync()) {
+        final data = await rootBundle.load('assets/shape_predictor_5_face_landmarks.dat');
         final bytes = data.buffer.asUint8List();
-        await File(modelPath).writeAsBytes(bytes);
-        print('✅ Modelo copiado al almacenamiento');
-    } else {
-        print('✅ Modelo ya existe');
+        await File(predictorPath).writeAsBytes(bytes);
+        print('✅ Shape predictor copiado');
+    }
+    
+    // copiar modelo de reconocimiento
+    final recognizerPath = '${dir.path}/dlib_recognition.dat';
+    if (!File(recognizerPath).existsSync()) {
+        final data = await rootBundle.load('assets/dlib_face_recognition_resnet_model_v1.dat');
+        final bytes = data.buffer.asUint8List();
+        await File(recognizerPath).writeAsBytes(bytes);
+        print('✅ Modelo reconocimiento copiado');
     }
 }
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
