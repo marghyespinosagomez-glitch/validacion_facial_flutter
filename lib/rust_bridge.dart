@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:ffi/ffi.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
+import 'package:flutter/foundation.dart';
 
 typedef InitModelNative = Int32 Function(Pointer<Utf8> modelPath);
 typedef InitModelDart = int Function(Pointer<Utf8> modelPath);
@@ -48,8 +49,9 @@ class RustBridge {
 
   static Future<int> initIndex() async {
     final dbPath = await _getDbPath();
+    print('initIndex ruta BD: $dbPath');
     final dbPathPtr = dbPath.toNativeUtf8();
-    final result = _initIndex(dbPathPtr);
+    final result = await compute((_) => _initIndex(dbPathPtr), null);
     calloc.free(dbPathPtr);
     return result;
   }
